@@ -27,6 +27,7 @@
     "react-scripts": "5.0.1",
     "react-toastify": "^10.0.5",
     "recharts": "^2.13.2",
+    "serve": "^14.2.4",
     "sweetalert2": "^11.14.4",
     "web-vitals": "^2.1.4"
   },

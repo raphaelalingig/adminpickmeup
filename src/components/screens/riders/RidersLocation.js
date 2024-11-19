@@ -1,13 +1,13 @@
 import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
-import MarkerClusterGroup from 'react-leaflet-cluster';
+import MarkerClusterGroup from "react-leaflet-cluster";
 import { Icon } from "leaflet";
 import Sidenav from "../../parts/Sidenav";
 import Header from "../../parts/Header";
 import userService from "../../../services";
 import "leaflet/dist/leaflet.css";
-import 'leaflet.markercluster/dist/MarkerCluster.css';
-import 'leaflet.markercluster/dist/MarkerCluster.Default.css';
+import "leaflet.markercluster/dist/MarkerCluster.css";
+import "leaflet.markercluster/dist/MarkerCluster.Default.css";
 import yellow from "../../pictures/rider_yellow.png";
 import red from "../../pictures/rider_red.png";
 import blue from "../../pictures/rider_blue.png";
@@ -44,57 +44,51 @@ const icons = {
   ),
   cluster: createPinIcon(
     "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png"
-  )
+  ),
 };
 
 // Debug Panel Component
-const DebugPanel = ({ data }) => (
-  <div className="absolute top-4 right-4 bg-white p-3 rounded-lg shadow-lg text-sm z-[9999]">
-    <h3 className="font-bold mb-2">Additional Info: </h3>
-    <div className="space-y-1">
-      <p>Total Riders: {data.totalRiders}</p>
-      <div className="">
-        <h1 className="font-bold mb-2">Icon Legend:</h1>
-        <div className="flex items-center space-x-2 mb-1">
-          <img
-            src={yellow}
-            alt="Available Riders"
-            height={15}
-            width={15}
-          />
-          <p>Available</p>
-        </div>
-        <div className="flex items-center space-x-2 mb-1">
-          <img
-            src={blue}
-            alt="Available Riders"
-            height={15}
-            width={15}
-          />
-          <p>Booked</p>
-        </div>
-        <div className="flex items-center space-x-2 mb-1">
-          <img
-            src={red}
-            alt="Available Riders"
-            height={15}
-            width={15}
-          />
-          <p>Offline</p>
-        </div>
-        <div className="flex items-center space-x-2">
-          <img
-            src={"https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-yellow.png"}
-            alt="Available Riders"
-            height={15}
-            width={15}
-          />
-          <p>Admin Current Location</p>
-        </div>
+const DebugPanel = ({ data }) => {
+  const [isExpanded, setIsExpanded] = useState(false);
+
+  return (
+    <div className="absolute top-4 right-4 bg-white rounded-lg shadow-lg text-sm z-[9999] overflow-hidden">
+      <div
+        className="flex justify-between items-center p-3 cursor-pointer hover:bg-gray-100"
+        onClick={() => setIsExpanded(!isExpanded)}
+      >
+        <h3 className="font-bold">Additional Info: {isExpanded ? "-" : "+"}</h3>
+        {!isExpanded && <p className="text-gray-500">Click to expand</p>}
       </div>
+
+      {isExpanded && (
+        <div className="p-3 space-y-2">
+          <p>Total Riders: {data.totalRiders}</p>
+          <div>
+            <h1 className="font-bold mb-2">Icon Legend:</h1>
+            <div className="space-y-2">
+              {[
+                { icon: yellow, label: "Available", status: "Available" },
+                { icon: blue, label: "Booked", status: "Booked" },
+                { icon: red, label: "Offline", status: "Offline" },
+                {
+                  icon: "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-yellow.png",
+                  label: "Admin Current Location",
+                  status: "Admin Location",
+                },
+              ].map(({ icon, label, status }) => (
+                <div key={status} className="flex items-center space-x-2">
+                  <img src={icon} alt={label} height={15} width={15} />
+                  <p>{label}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
-  </div>
-);
+  );
+};
 
 // Alert Component
 const Alert = ({ message, type = "error", onClose }) => (
@@ -129,11 +123,12 @@ const Alert = ({ message, type = "error", onClose }) => (
 // Custom cluster icon styles
 const createClusterCustomIcon = function (cluster) {
   return new Icon({
-    iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
+    iconUrl:
+      "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png",
     iconSize: [25, 41],
     iconAnchor: [12, 41],
     popupAnchor: [1, -34],
-    html: `<div class="cluster-icon">${cluster.getChildCount()}</div>`
+    html: `<div class="cluster-icon">${cluster.getChildCount()}</div>`,
   });
 };
 
@@ -141,9 +136,10 @@ const createClusterCustomIcon = function (cluster) {
 const DynamicMarkers = ({ riders, icons, search }) => {
   const markers = useMemo(() => {
     return riders.map((rider) => {
-      const isHighlighted = search && 
+      const isHighlighted =
+        search &&
         (rider.user.first_name.toLowerCase().includes(search.toLowerCase()) ||
-         rider.user.last_name.toLowerCase().includes(search.toLowerCase()));
+          rider.user.last_name.toLowerCase().includes(search.toLowerCase()));
 
       return (
         <Marker
@@ -258,7 +254,7 @@ const RidersLocation = () => {
   useEffect(() => {
     setIsLoading(true);
     fetchRiders().finally(() => setIsLoading(false));
-    
+
     const interval = setInterval(fetchRiders, 10000);
     return () => clearInterval(interval);
   }, [fetchRiders]);
@@ -298,7 +294,9 @@ const RidersLocation = () => {
             <div className="mb-6 relative">
               <h1 className="text-2xl font-bold mb-4">Riders Location</h1>
 
-              {error && <Alert message={error} onClose={() => setError(null)} />}
+              {error && (
+                <Alert message={error} onClose={() => setError(null)} />
+              )}
               {warning && (
                 <Alert
                   message={warning}
@@ -340,9 +338,9 @@ const RidersLocation = () => {
                     zoom={DEFAULT_ZOOM}
                     className="h-full w-full"
                     whenReady={() => {
-                      setDebugInfo(prev => ({
+                      setDebugInfo((prev) => ({
                         ...prev,
-                        mapLoaded: true
+                        mapLoaded: true,
                       }));
                     }}
                   >
@@ -357,7 +355,11 @@ const RidersLocation = () => {
                       </Marker>
                     )}
 
-                    <DynamicMarkers riders={validRiders} icons={icons} search={search} />
+                    <DynamicMarkers
+                      riders={validRiders}
+                      icons={icons}
+                      search={search}
+                    />
                     <MapSearchController riders={validRiders} search={search} />
                   </MapContainer>
 

@@ -15,7 +15,7 @@ export const Feedback = () => {
       try {
         const response = await userService.fetchFeedbacks();
         setFeedbacks(response.data);
-        console.log(response.data)
+        console.log(response.data);
       } catch (error) {
         console.error("There was an error fetching the feedbacks!", error);
       } finally {
@@ -72,9 +72,6 @@ export const Feedback = () => {
                     value={searchInput}
                     onChange={(e) => setSearchInput(e.target.value)}
                   />
-                  <button className="px-4 py-2 bg-gray-200 rounded-lg">
-                    Filter
-                  </button>
                 </div>
               </div>
               {loading ? (
@@ -111,9 +108,7 @@ export const Feedback = () => {
                               ? `${feedback.recipient_first_name} ${feedback.recipient_last_name}`
                               : "N/A"}
                           </td>
-                          <td className="p-4">
-                          {feedback.rating || "N/A"}
-                          </td>
+                          <td className="p-4">{feedback.rating || "N/A"}</td>
                           <td className="p-4">
                             {feedback.created_at
                               ? new Date(

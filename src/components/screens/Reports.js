@@ -15,7 +15,7 @@ export const Report = () => {
       try {
         const response = await userService.fetchReports();
         setReports(response.data);
-        console.log(response.data)
+        console.log(response.data);
       } catch (error) {
         console.error("There was an error fetching the feedbacks!", error);
       } finally {
@@ -36,10 +36,7 @@ export const Report = () => {
   // Pagination Logic
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = filteredReports.slice(
-    indexOfFirstItem,
-    indexOfLastItem
-  );
+  const currentItems = filteredReports.slice(indexOfFirstItem, indexOfLastItem);
 
   // Change Page
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
@@ -72,9 +69,6 @@ export const Report = () => {
                     value={searchInput}
                     onChange={(e) => setSearchInput(e.target.value)}
                   />
-                  <button className="px-4 py-2 bg-gray-200 rounded-lg">
-                    Filter
-                  </button>
                 </div>
               </div>
               {loading ? (
@@ -99,8 +93,7 @@ export const Report = () => {
                           key={report.report_id}
                         >
                           <td className="p-4">
-                            {report.sender_first_name &&
-                            report.sender_last_name
+                            {report.sender_first_name && report.sender_last_name
                               ? `${report.sender_first_name} ${report.sender_last_name}`
                               : "N/A"}
                           </td>
@@ -111,14 +104,10 @@ export const Report = () => {
                               ? `${report.recipient_first_name} ${report.recipient_last_name}`
                               : "N/A"}
                           </td>
-                          <td className="p-4">
-                          {report.comment || "N/A"}
-                          </td>
+                          <td className="p-4">{report.comment || "N/A"}</td>
                           <td className="p-4">
                             {report.created_at
-                              ? new Date(
-                                  report.created_at
-                                ).toLocaleDateString()
+                              ? new Date(report.created_at).toLocaleDateString()
                               : "N/A"}
                           </td>
                           <td className="p-4">{report.ride_id || "N/A"}</td>

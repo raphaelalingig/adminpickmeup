@@ -288,7 +288,7 @@ export const Dashboard = () => {
           {/* Recent Bookings */}
           <div className="bg-white animate__animated animate__fadeIn rounded-lg shadow-lg p-6 flex flex-col h-[calc(100vh-540px)] min-h-[300px]">
             <h2 className="text-xl font-bold mb-4">Recent Bookings</h2>
-            <div className="bookings-table-container flex-grow overflow-hidden">
+            <div className="bookings-table-container flex-grow overflow-auto">
               <table className="min-w-full">
                 <thead className="bg-gray-50">
                   <tr>

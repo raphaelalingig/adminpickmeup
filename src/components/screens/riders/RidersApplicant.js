@@ -70,6 +70,8 @@ const Modal = ({
   const [selectedImage, setSelectedImage] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const { isSideBarMenuOpen } = useContext(AuthContext); // Add this line to get sidebar state
+  const [showRejectionModal, setShowRejectionModal] = useState(false);
+  const [selectedReason, setSelectedReason] = useState("");
 
   if (!user) return null;
 
@@ -98,6 +100,25 @@ const Modal = ({
         return "text-green-600";
       default:
         return "text-gray-600";
+    }
+  };
+  const rejectionReasons = [
+    "Notorious",
+    "Criminal records",
+    "Have a bad reputation",
+    "Not suitable",
+  ];
+  const handleReject = () => {
+    setShowRejectionModal(true);
+  };
+
+  const handleConfirmRejection = () => {
+    if (selectedReason) {
+      // Handle the rejection with the selected reason
+      console.log("Rejected with reason:", selectedReason);
+      setShowRejectionModal(false);
+      setSelectedReason("");
+      // Add your rejection API call here
     }
   };
 
@@ -196,9 +217,15 @@ const Modal = ({
             <p className="text-xs">
               <span className={statusColor}>{verification_status}</span>
             </p>
-            <p className="text-gray-600 text-base md:text-lg mb-1">@{user.user_name}</p>
-            <p className="text-gray-600 text-base md:text-lg mb-1">{user.mobile_number}</p>
-            <p className="text-gray-600 text-base md:text-lg mb-1">{user.email}</p>
+            <p className="text-gray-600 text-base md:text-lg mb-1">
+              @{user.user_name}
+            </p>
+            <p className="text-gray-600 text-base md:text-lg mb-1">
+              {user.mobile_number}
+            </p>
+            <p className="text-gray-600 text-base md:text-lg mb-1">
+              {user.email}
+            </p>
           </div>
         </div>
 
@@ -213,7 +240,23 @@ const Modal = ({
           </div>
         </div>
 
-        <div className="mt-6 flex justify-end">
+        <div className="mt-6 flex justify-between">
+          {/* Reject button */}
+          <button
+            type="button"
+            className="bg-red-600 text-white px-6 py-2 rounded hover:bg-red-700 transition-colors"
+            onClick={handleReject}
+          >
+            Reject
+          </button>
+          {/* Somethings missing button */}
+          <button
+            type="button"
+            className="bg-yellow-400 text-white px-6 py-2 rounded hover:bg-yellow-600 transition-colors"
+            onClick={""}
+          >
+            Somethings missing
+          </button>
           <button
             onClick={onClose}
             className="bg-red-600 text-white px-6 py-2 rounded hover:bg-red-700 transition-colors"
@@ -222,10 +265,59 @@ const Modal = ({
           </button>
         </div>
       </div>
+      {/* Rejection Modal */}
+      {showRejectionModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
+            <h3 className="text-xl font-bold mb-4">Select Rejection Reason</h3>
+            <div className="space-y-3">
+              {rejectionReasons.map((reason) => (
+                <label key={reason} className="flex items-center space-x-2">
+                  <input
+                    type="radio"
+                    name="rejectionReason"
+                    value={reason}
+                    checked={selectedReason === reason}
+                    onChange={(e) => setSelectedReason(e.target.value)}
+                    className="form-radio text-red-600"
+                  />
+                  <span className="text-gray-700">{reason}</span>
+                </label>
+              ))}
+            </div>
+            <div className="mt-6 flex justify-end space-x-3">
+              <button
+                onClick={() => {
+                  setShowRejectionModal(false);
+                  setSelectedReason("");
+                }}
+                className="px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleConfirmRejection}
+                disabled={!selectedReason}
+                className={`px-4 py-2 rounded ${
+                  selectedReason
+                    ? "bg-red-600 hover:bg-red-700 text-white"
+                    : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                } transition-colors`}
+              >
+                Confirm Rejection
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {selectedImage && (
         <div className="fixed inset-0 bg-gray-600 bg-opacity-75 flex justify-center items-center z-50">
-          <div className={`bg-white p-4 rounded-lg shadow-lg relative max-w-4xl w-full mx-4 ${isSideBarMenuOpen ? 'ml-64' : ''}`}>
+          <div
+            className={`bg-white p-4 rounded-lg shadow-lg relative max-w-4xl w-full mx-4 ${
+              isSideBarMenuOpen ? "ml-64" : ""
+            }`}
+          >
             <button
               onClick={() => setSelectedImage(null)}
               className="absolute top-2 right-2 text-red-600 hover:text-red-800 transition-colors"
@@ -573,6 +665,8 @@ export const RidersApplicant = () => {
                       ) : null}
                       Confirm
                     </button>
+
+                   
                     <button
                       type="button"
                       className="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:col-start-1 sm:mt-0"

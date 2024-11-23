@@ -7,10 +7,12 @@ import UserIcon from "../pictures/User-icon.png";
 import userService from "../../services";
 import { useAuth } from "../../hooks/useAuth";
 import { AuthContext } from "../../context/AuthContext";
+import { BellIcon } from "@heroicons/react/outline";
 
 const Header = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const navigate = useNavigate();
+  const [unreadCount, setUnreadCount] = useState(0);
   const { logout } = useAuth();
   const { isSideBarMenuOpen, setIsSideBarMenuOpen } = useContext(AuthContext);
 
@@ -82,7 +84,24 @@ const Header = () => {
             </svg>
           </div>
         </div>
-        <div className="relative">
+
+        <div className="relative flex items-center space-x-6">
+          <div className="relative">
+            {/* Bell Icon */}
+            <button
+              type="button"
+              className="p-2 bg-gray-100 rounded-full hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-400"
+            >
+              <BellIcon className="w-6 h-6 text-gray-800" />
+            </button>
+
+            {/* Notification Badge */}
+            {unreadCount > 0 && (
+              <span className="absolute top-0 right-0 block h-4 w-4 bg-red-500 text-white text-xs leading-none rounded-full ring-2 ring-white">
+                {unreadCount}
+              </span>
+            )}
+          </div>
           <Menu>
             {({ open }) => (
               <>

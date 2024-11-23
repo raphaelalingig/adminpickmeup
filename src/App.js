@@ -27,6 +27,7 @@ import ManageAccount from "./components/ManageAccount";
 import RidersPayment from "./components/screens/riders/RidersPayment";
 import RidersLocation from "./components/screens/riders/RidersLocation";
 import Header from "./components/parts/Header";
+import UpdateFare from "./components/screens/super-admin/UpdatingFare";
 const AxiosInterceptor = ({ children }) => {
   const navigate = useNavigate();
   const { logout } = useAuth();
@@ -84,12 +85,12 @@ function AppContent() {
   return (
     <div className="min-h-screen bg-gray-100">
       <Header />
-          <Sidenav />
-        <main
+      <Sidenav />
+      <main
         className={`transition-all duration-300 ${
           isSideBarMenuOpen ? "lg:ml-64" : ""
-          }`}
-        >
+        }`}
+      >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <Routes>
             <Route path="/dashboard" element={<Dashboard />} />
@@ -104,9 +105,10 @@ function AppContent() {
             <Route path="/riderslocation" element={<RidersLocation />} />
             <Route path="/settings" element={<Settings />} />
             <Route path="/manageacc" element={<ManageAccount />} />
+            <Route path="/updatefare" element={<UpdateFare />} />
             <Route path="*" element={<Navigate to="/dashboard" replace />} />
           </Routes>
-      </div>
+        </div>
       </main>
     </div>
   );

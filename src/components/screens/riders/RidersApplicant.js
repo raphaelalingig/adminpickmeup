@@ -72,6 +72,13 @@ const Modal = ({
   const { isSideBarMenuOpen } = useContext(AuthContext); // Add this line to get sidebar state
   const [showRejectionModal, setShowRejectionModal] = useState(false);
   const [selectedReason, setSelectedReason] = useState("");
+  const [otherReason, setOtherReason] = useState("");
+  {/*modal for something went missing*/}
+  const [showMissingModal, setShowMissingModal] = useState(false);
+  const [missingReason, setMissingReason] = useState("");
+  const [otherMissingReason, setOtherMissingReason] = useState("");
+
+
 
   if (!user) return null;
 
@@ -102,12 +109,28 @@ const Modal = ({
         return "text-gray-600";
     }
   };
+ 
   const rejectionReasons = [
     "Notorious",
     "Criminal records",
     "Have a bad reputation",
     "Not suitable",
+    "Others"
   ];
+  {/*modal for something went missing*/}
+  const handleMissingReasonConfirm = (reason, otherReason) => {
+    if (reason === "Others") {
+      console.log("Selected Reason: Others, Details:", otherReason);
+    } else {
+      console.log("Selected Reason:", reason);
+    }
+    setShowMissingModal(false);
+    setMissingReason("");
+    setOtherMissingReason("");
+  };
+
+
+
   const handleReject = () => {
     setShowRejectionModal(true);
   };
@@ -253,7 +276,7 @@ const Modal = ({
           <button
             type="button"
             className="bg-yellow-400 text-white px-6 py-2 rounded hover:bg-yellow-600 transition-colors"
-            onClick={""}
+            onClick={() => setShowMissingModal(true)}
           >
             Somethings missing
           </button>
@@ -265,6 +288,75 @@ const Modal = ({
           </button>
         </div>
       </div>
+      {/* Something's Missing Modal */}
+      {showMissingModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
+            <h3 className="text-xl font-bold mb-4">Select Missing Reason</h3>
+            <div className="space-y-3">
+              {["Wrong Papers", "Blurry Papers", "Others"].map((reason) => (
+                <label key={reason} className="flex items-center space-x-2">
+                  <input
+                    type="radio"
+                    name="missingReason"
+                    value={reason}
+                    checked={missingReason === reason}
+                    onChange={(e) => setMissingReason(e.target.value)}
+                    className="form-radio text-yellow-600"
+                  />
+                  <span className="text-gray-700">{reason}</span>
+                </label>
+              ))}
+            </div>
+
+            {/* Conditional input field for "Others" */}
+            {missingReason === "Others" && (
+              <div className="mt-4">
+                <label className="block text-gray-700 mb-2">
+                  Please specify:
+                </label>
+                <input
+                  type="text"
+                  value={otherMissingReason}
+                  onChange={(e) => setOtherMissingReason(e.target.value)}
+                  className="w-full border border-gray-300 rounded px-3 py-2 focus:ring focus:ring-yellow-500 focus:border-yellow-500"
+                  placeholder="Enter your reason"
+                />
+              </div>
+            )}
+
+            <div className="mt-6 flex justify-end space-x-3">
+              <button
+                onClick={() => {
+                  setShowMissingModal(false);
+                  setMissingReason("");
+                  setOtherMissingReason("");
+                }}
+                className="px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() =>
+                  handleMissingReasonConfirm(missingReason, otherMissingReason)
+                }
+                disabled={
+                  !missingReason ||
+                  (missingReason === "Others" && !otherMissingReason)
+                }
+                className={`px-4 py-2 rounded ${
+                  missingReason &&
+                  (missingReason !== "Others" || otherMissingReason)
+                    ? "bg-yellow-400 hover:bg-yellow-500 text-white"
+                    : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                } transition-colors`}
+              >
+                Confirm
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       {/* Rejection Modal */}
       {showRejectionModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -285,11 +377,27 @@ const Modal = ({
                 </label>
               ))}
             </div>
+            {/* Conditional input field for "Others" */}
+            {selectedReason === "Others" && (
+              <div className="mt-4">
+                <label className="block text-gray-700 mb-2">
+                  Please specify:
+                </label>
+                <input
+                  type="text"
+                  value={otherReason}
+                  onChange={(e) => setOtherReason(e.target.value)}
+                  className="w-full border-gray-300 rounded px-3 py-2 focus:ring focus:ring-red-500 focus:border-red-500"
+                  placeholder="Enter your reason"
+                />
+              </div>
+            )}
             <div className="mt-6 flex justify-end space-x-3">
               <button
                 onClick={() => {
                   setShowRejectionModal(false);
                   setSelectedReason("");
+                  setOtherReason("");
                 }}
                 className="px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors"
               >
@@ -297,9 +405,12 @@ const Modal = ({
               </button>
               <button
                 onClick={handleConfirmRejection}
-                disabled={!selectedReason}
+                disabled={
+                  !selectedReason ||
+                  (selectedReason === "Others" && !otherReason)
+                }
                 className={`px-4 py-2 rounded ${
-                  selectedReason
+                  selectedReason && (selectedReason !== "Others" || otherReason)
                     ? "bg-red-600 hover:bg-red-700 text-white"
                     : "bg-gray-300 text-gray-500 cursor-not-allowed"
                 } transition-colors`}

@@ -6,7 +6,7 @@ const UpdateFare = () => {
   const [formData, setFormData] = useState({
     fairName: "",
     location: "",
-    date: "",
+    date: "", // Initialize with an empty string
     description: "",
   });
 
@@ -26,6 +26,9 @@ const UpdateFare = () => {
 
   const handleEdit = () => {
     setIsEditable(true);
+    // Set the date field to the current date
+    const currentDate = new Date().toISOString().split("T")[0]; // Get the current date in YYYY-MM-DD format
+    setFormData({ ...formData, date: currentDate });
   };
 
   return (

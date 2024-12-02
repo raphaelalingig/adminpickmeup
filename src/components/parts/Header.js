@@ -57,6 +57,14 @@ const Header = () => {
     console.log(isSideBarMenuOpen);
   };
 
+
+   const [isInfoVisible, setIsInfoVisible] = useState(false);
+
+   const toggleInfo = () => {
+     setIsInfoVisible(!isInfoVisible);
+   };
+
+
   return (
     <>
       {/* Header Component */}
@@ -88,12 +96,21 @@ const Header = () => {
         <div className="relative flex items-center space-x-6">
           <div className="relative">
             {/* Bell Icon */}
-            <button
-              type="button"
-              className="p-2 bg-gray-100 rounded-full hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-400"
-            >
-              <BellIcon className="w-6 h-6 text-gray-800" />
-            </button>
+            <div className="relative">
+              <button
+                type="button"
+                className="p-2 bg-gray-100 rounded-full hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-400"
+                onClick={toggleInfo}
+              >
+                <BellIcon className="w-6 h-6 text-gray-800" />
+              </button>
+
+              {isInfoVisible && (
+                <div className="absolute top-12 left-0 bg-white p-4 shadow-lg rounded border border-gray-300 w-64">
+                  <p className="text-gray-600">This is a sample info box.</p>
+                </div>
+              )}
+            </div>
 
             {/* Notification Badge */}
             {unreadCount > 0 && (

@@ -222,20 +222,30 @@ const Modal = ({
               <h2 className="text-2xl md:text-3xl font-bold mb-2 md:mb-0">
                 {user.first_name} {user.last_name}
               </h2>
-              <button
-                className={`px-4 py-2 rounded transition-colors ${
-                  verification_status === "Verified"
-                    ? "bg-orange-500 hover:bg-orange-600 text-white"
-                    : "bg-green-500 hover:bg-green-600 text-white"
-                } flex items-center justify-center`}
-                onClick={handleVerificationToggle}
-                disabled={isLoading}
-              >
-                {isLoading ? (
-                  <Loader className="animate-spin mr-2" size={16} />
-                ) : null}
-                {verification_status === "Verified" ? "Unverify" : "Verify"}
-              </button>
+              <div className="flex items-center space-x-4">
+                {/* Reject button */}
+                <button
+                  type="button"
+                  className="bg-red-600 text-white px-6 py-2 rounded hover:bg-red-700 transition-colors"
+                  onClick={handleReject}
+                >
+                  Reject
+                </button>
+                <button
+                  className={`px-4 py-2 rounded transition-colors ${
+                    verification_status === "Verified"
+                      ? "bg-orange-500 hover:bg-orange-600 text-white"
+                      : "bg-green-500 hover:bg-green-600 text-white"
+                  } flex items-center justify-center`}
+                  onClick={handleVerificationToggle}
+                  disabled={isLoading}
+                >
+                  {isLoading ? (
+                    <Loader className="animate-spin mr-2" size={16} />
+                  ) : null}
+                  {verification_status === "Verified" ? "Unverify" : "Verify"}
+                </button>
+              </div>
             </div>
             <p className="text-xs">
               <span className={statusColor}>{verification_status}</span>
@@ -264,14 +274,6 @@ const Modal = ({
         </div>
 
         <div className="mt-6 flex justify-between">
-          {/* Reject button */}
-          <button
-            type="button"
-            className="bg-red-600 text-white px-6 py-2 rounded hover:bg-red-700 transition-colors"
-            onClick={handleReject}
-          >
-            Reject
-          </button>
           {/* Somethings missing button */}
           <button
             type="button"

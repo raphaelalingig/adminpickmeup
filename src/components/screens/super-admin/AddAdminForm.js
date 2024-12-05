@@ -20,6 +20,44 @@ const AddAdminForm = ({
     message: "",
   });
 
+
+  const calculatePasswordStrength = (password) => {
+    if (!password) return 0;
+
+    let strength = 0;
+    const lengthCriteria = password.length;
+    const lowercaseCriteria = /[a-z]/.test(password);
+    const uppercaseCriteria = /[A-Z]/.test(password);
+    const numberCriteria = /[0-9]/.test(password);
+    const specialCriteria = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]+/.test(
+      password
+    );
+
+    // Length criteria
+    if (lengthCriteria >= 8) strength++;
+    if (lengthCriteria >= 12) strength++;
+
+    // Character type criteria
+    if (lowercaseCriteria) strength++;
+    if (uppercaseCriteria) strength++;
+    if (numberCriteria) strength++;
+    if (specialCriteria) strength++;
+
+    return strength;
+  };
+
+  const getPasswordStrengthColor = (strength) => {
+    if (strength <= 2) return "text-red-500";
+    if (strength <= 4) return "text-yellow-500";
+    return "text-green-500";
+  };
+
+  const getPasswordStrengthText = (strength) => {
+    if (strength <= 2) return "Weak";
+    if (strength <= 4) return "Moderate";
+    return "Strong";
+  };
+
   const mapGender = (gender) => {
     const genderMap = {
       M: "Male",
@@ -143,139 +181,151 @@ const AddAdminForm = ({
 
   return (
     <>
-    <div className="border p-4 rounded-lg shadow-sm bg-white mb-4">
-      <h2 className="text-xl font-bold mb-4">
-        {editingAdminId ? "Edit Admin" : "New Admin"}
-      </h2>
-      <form onSubmit={handleSubmit}>
-        {errors.general && (
-          <div className="text-red-500 mb-2">{errors.general}</div>
-        )}
-        <div className="flex mb-4">
-          <div className="flex-1 mr-2">
-            <label className="block text-gray-700">First Name:</label>
-            <input
-              type="text"
-              name="first_name"
-              value={userData.first_name}
-              className="border rounded w-full py-2 px-3 text-gray-700"
-              onChange={handleChange}
-            />
-            {errors.first_name && (
-              <div className="text-red-500">{errors.first_name}</div>
-            )}
-          </div>
-          <div className="flex-1 ml-2">
-            <label className="block text-gray-700">Last Name:</label>
-            <input
-              type="text"
-              name="last_name"
-              value={userData.last_name}
-              className="border rounded w-full py-2 px-3 text-gray-700"
-              onChange={handleChange}
-            />
-            {errors.last_name && (
-              <div className="text-red-500">{errors.last_name}</div>
-            )}
-          </div>
-        </div>
-        <div className="flex mb-4">
-          <div className="flex-1 mr-2">
-            <label className="block text-gray-700">Username:</label>
-            <input
-              type="text"
-              name="user_name"
-              value={userData.user_name}
-              className="border rounded w-full py-2 px-3 text-gray-700"
-              onChange={handleChange}
-            />
-            {errors.user_name && (
-              <div className="text-red-500">{errors.user_name}</div>
-            )}
-          </div>
-          <div className="flex-1 ml-2">
-            <label className="block text-gray-700">Gender:</label>
-            <select
-              name="gender"
-              value={userData.gender}
-              className="border rounded w-full py-2 px-3 text-gray-700"
-              onChange={handleChange}
-            >
-              <option value="">Select your gender</option>
-              <option value="Male">Male</option>
-              <option value="Female">Female</option>
-            </select>
-            {errors.gender && (
-              <div className="text-red-500">{errors.gender}</div>
-            )}
-          </div>
-        </div>
-        <div className="mb-4">
-          <label className="block text-gray-700">Date of Birth:</label>
-          <DatePicker
-            selected={userData.date_of_birth}
-            onChange={handleDateChange}
-            className="border rounded w-full py-2 px-3 text-gray-700"
-          />
-          {errors.date_of_birth && (
-            <div className="text-red-500">{errors.date_of_birth}</div>
+      <div className="border p-4 rounded-lg shadow-sm bg-white mb-4">
+        <h2 className="text-xl font-bold mb-4">
+          {editingAdminId ? "Edit Admin" : "New Admin"}
+        </h2>
+        <form onSubmit={handleSubmit}>
+          {errors.general && (
+            <div className="text-red-500 mb-2">{errors.general}</div>
           )}
-        </div>
-        <div className="mb-4">
-          <label className="block text-gray-700">Email:</label>
-          <input
-            type="email"
-            name="email"
-            value={userData.email}
-            className="border rounded w-full py-2 px-3 text-gray-700"
-            onChange={handleChange}
-          />
-          {errors.email && <div className="text-red-500">{errors.email}</div>}
-        </div>
-        {!editingAdminId && (
-          <>
-            <div className="mb-4">
-              <label className="block text-gray-700">Password:</label>
+          <div className="flex mb-4">
+            <div className="flex-1 mr-2">
+              <label className="block text-gray-700">First Name:</label>
               <input
-                type="password"
-                name="password"
-                value={userData.password}
+                type="text"
+                name="first_name"
+                value={userData.first_name}
                 className="border rounded w-full py-2 px-3 text-gray-700"
                 onChange={handleChange}
               />
-              {errors.password && (
-                <div className="text-red-500">{errors.password}</div>
+              {errors.first_name && (
+                <div className="text-red-500">{errors.first_name}</div>
               )}
             </div>
-            <div className="mb-4">
-              <label className="block text-gray-700">Confirm Password:</label>
+            <div className="flex-1 ml-2">
+              <label className="block text-gray-700">Last Name:</label>
               <input
-                type="password"
-                name="repassword"
-                value={userData.repassword}
+                type="text"
+                name="last_name"
+                value={userData.last_name}
                 className="border rounded w-full py-2 px-3 text-gray-700"
                 onChange={handleChange}
               />
-              {errors.repassword && (
-                <div className="text-red-500">{errors.repassword}</div>
+              {errors.last_name && (
+                <div className="text-red-500">{errors.last_name}</div>
               )}
             </div>
-          </>
-        )}
-        <div className="mb-4">
-          <label className="block text-gray-700">Mobile Number:</label>
-          <input
-            type="tel"
-            name="mobile_number"
-            value={userData.mobile_number}
-            className="border rounded w-full py-2 px-3 text-gray-700"
-            onChange={handleChange}
-          />
-          {errors.mobile_number && (
-            <div className="text-red-500">{errors.mobile_number}</div>
+          </div>
+          <div className="flex mb-4">
+            <div className="flex-1 mr-2">
+              <label className="block text-gray-700">Username:</label>
+              <input
+                type="text"
+                name="user_name"
+                value={userData.user_name}
+                className="border rounded w-full py-2 px-3 text-gray-700"
+                onChange={handleChange}
+              />
+              {errors.user_name && (
+                <div className="text-red-500">{errors.user_name}</div>
+              )}
+            </div>
+            <div className="flex-1 ml-2">
+              <label className="block text-gray-700">Gender:</label>
+              <select
+                name="gender"
+                value={userData.gender}
+                className="border rounded w-full py-2 px-3 text-gray-700"
+                onChange={handleChange}
+              >
+                <option value="">Select your gender</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+              </select>
+              {errors.gender && (
+                <div className="text-red-500">{errors.gender}</div>
+              )}
+            </div>
+          </div>
+          <div className="mb-4">
+            <label className="block text-gray-700">Date of Birth:</label>
+            <DatePicker
+              selected={userData.date_of_birth}
+              onChange={handleDateChange}
+              className="border rounded w-full py-2 px-3 text-gray-700"
+            />
+            {errors.date_of_birth && (
+              <div className="text-red-500">{errors.date_of_birth}</div>
+            )}
+          </div>
+          <div className="mb-4">
+            <label className="block text-gray-700">Email:</label>
+            <input
+              type="email"
+              name="email"
+              value={userData.email}
+              className="border rounded w-full py-2 px-3 text-gray-700"
+              onChange={handleChange}
+            />
+            {errors.email && <div className="text-red-500">{errors.email}</div>}
+          </div>
+          {!editingAdminId && (
+            <>
+              <div className="mb-4">
+                <label className="block text-gray-700">Password:</label>
+                <input
+                  type="password"
+                  name="password"
+                  value={userData.password}
+                  className="border rounded w-full py-2 px-3 text-gray-700"
+                  onChange={handleChange}
+                />
+                {userData.password && (
+                  <div
+                    className={`text-sm mt-1 ${getPasswordStrengthColor(
+                      calculatePasswordStrength(userData.password)
+                    )}`}
+                  >
+                    Password Strength:{" "}
+                    {getPasswordStrengthText(
+                      calculatePasswordStrength(userData.password)
+                    )}
+                  </div>
+                )}
+                {errors.password && (
+                  <div className="text-red-500">{errors.password}</div>
+                )}
+              </div>
+              <div className="mb-4">
+                <label className="block text-gray-700">Confirm Password:</label>
+                <input
+                  type="password"
+                  name="repassword"
+                  value={userData.repassword}
+                  className="border rounded w-full py-2 px-3 text-gray-700"
+                  onChange={handleChange}
+                />
+                {errors.repassword && (
+                  <div className="text-red-500">{errors.repassword}</div>
+                )}
+              </div>
+            </>
           )}
-        </div>
-        <div className="flex justify-between">
+          <div className="mb-4">
+            <label className="block text-gray-700">Mobile Number:</label>
+            <input
+              type="tel"
+              name="mobile_number"
+              value={userData.mobile_number}
+              className="border rounded w-full py-2 px-3 text-gray-700"
+              onChange={handleChange}
+            />
+            {errors.mobile_number && (
+              <div className="text-red-500">{errors.mobile_number}</div>
+            )}
+          </div>
+          <div className="flex justify-between">
             <button
               type="button"
               className="bg-gray-500 text-white py-1 px-4 rounded"
@@ -289,14 +339,16 @@ const AddAdminForm = ({
             >
               {editingAdminId ? "Update" : "Add"}
             </button>
-         </div>
-      </form>
-    </div>
-     <Transition.Root show={confirmationModal.isOpen} as={Fragment}>
+          </div>
+        </form>
+      </div>
+      <Transition.Root show={confirmationModal.isOpen} as={Fragment}>
         <Dialog
           as="div"
           className="relative z-50"
-          onClose={() => setConfirmationModal({ ...confirmationModal, isOpen: false })}
+          onClose={() =>
+            setConfirmationModal({ ...confirmationModal, isOpen: false })
+          }
         >
           <Transition.Child
             as={Fragment}
@@ -349,7 +401,12 @@ const AddAdminForm = ({
                     <button
                       type="button"
                       className="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:col-start-1 sm:mt-0"
-                      onClick={() => setConfirmationModal({ ...confirmationModal, isOpen: false })}
+                      onClick={() =>
+                        setConfirmationModal({
+                          ...confirmationModal,
+                          isOpen: false,
+                        })
+                      }
                     >
                       Cancel
                     </button>
@@ -360,7 +417,7 @@ const AddAdminForm = ({
           </div>
         </Dialog>
       </Transition.Root>
-      </>
+    </>
   );
 };
 

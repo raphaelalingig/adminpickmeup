@@ -93,23 +93,14 @@ const UpdateFare = () => {
 
             {/* Date */}
             <div className="mb-4">
-              <label
-                htmlFor="date"
-                className="block text-gray-700 text-sm font-bold mb-2"
-              >
-                Date Updated
-              </label>
+              <label className="block text-gray-700">Password:</label>
               <input
-                type="date"
-                id="date"
-                name="date"
-                value={formData.date}
+                type="password"
+                name="password"
+                value={""}
+                className="border rounded w-full py-2 px-3 text-gray-700"
                 onChange={handleChange}
                 disabled={!isEditable}
-                className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${
-                  !isEditable ? "bg-gray-200 cursor-not-allowed" : ""
-                }`}
-                required
               />
             </div>
 

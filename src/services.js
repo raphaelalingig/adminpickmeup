@@ -107,6 +107,11 @@ const userService = {
     return response.data;
   },
 
+  fare: async () => {
+    const response = await axios.get(API_URL + "view_fare")
+    return response.data;
+  },
+
   fetchRiders: async () => {
     const response = await axios.get(API_URL + "riders");
     return response.data;

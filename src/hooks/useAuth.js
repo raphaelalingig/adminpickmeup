@@ -10,7 +10,7 @@ export const useAuth = () => {
     throw new Error("useAuth must be used within an AuthProvider");
   }
 
-  const { isAuthenticated, setIsAuthenticated, userRole, setUserRole, userId, setUserId, userStatus, setUserStatus, loading, setLoading } = context;
+  const { isAuthenticated, setIsAuthenticated, token, setToken, userRole, setUserRole, userId, setUserId, userStatus, setUserStatus, loading, setLoading } = context;
 
   // Check for existing auth state on mount
   useEffect(() => {
@@ -21,6 +21,7 @@ export const useAuth = () => {
       const status = localStorage.getItem("user_id");
       if (token && role) {
         setIsAuthenticated(true);
+        setToken(token);
         setUserRole(parseInt(role));
       }
       if (user_id && status){
@@ -31,35 +32,38 @@ export const useAuth = () => {
     };
 
     checkAuthState();
-  }, [setIsAuthenticated, setUserRole, setUserId, setLoading, setUserStatus]);
+  }, [setIsAuthenticated, setUserRole, setUserId, setLoading, setUserStatus, setToken]);
 
   const login = useCallback((token, role, user_id, status) => {
     localStorage.setItem("token", token);
     localStorage.setItem("role", role);
     localStorage.setItem("user_id", user_id);
     localStorage.setItem("status", status);
+    setToken(token)
     setIsAuthenticated(true);
     setUserRole(parseInt(role));
     setUserId(parseInt(user_id));
     setUserStatus(status)
-  }, [setIsAuthenticated, setUserRole, setUserId, setUserStatus]);
+  }, [setIsAuthenticated, setUserRole, setUserId, setUserStatus, setToken]);
 
   const logout = useCallback(() => {
     localStorage.removeItem("token");
     localStorage.removeItem("role");
     localStorage.removeItem("user_id");
     localStorage.removeItem("status");
+    setToken(null)
     setIsAuthenticated(false);
     setUserRole(null);
     setUserId(null);
     setUserStatus(null);
-  }, [setIsAuthenticated, setUserRole, setUserId, setUserStatus]);
+  }, [setIsAuthenticated, setUserRole, setUserId, setUserStatus, setToken]);
 
   return {
     isAuthenticated,
     userRole,
     userId,
     userStatus,
+    token,
     login,
     logout,
     loading

@@ -59,9 +59,9 @@ const UserCard = ({
               ></path>
             </svg>
           ) : customer.status === "Active" ? (
-            "Disable"
+            "Block"
           ) : (
-            "Enable"
+            "Unblock"
           )}
         </button>
       </td>
@@ -127,12 +127,12 @@ export const ManageUser = () => {
   };
 
   const handleStatusChangeClick = (customer) => {
-    const newStatus = customer.status === "Active" ? "Disabled" : "Active";
+    const newStatus = customer.status === "Active" ? "Blocked" : "Active";
     setConfirmationModal({
       isOpen: true,
-      title: `${newStatus === "Active" ? "Enable" : "Disable"} User`,
+      title: `${newStatus === "Active" ? "Unblock" : "Block"} User`,
       message: `Are you sure you want to ${
-        newStatus === "Active" ? "enable" : "disable"
+        newStatus === "Active" ? "unblock" : "block"
       } ${customer.first_name} ${customer.last_name}?`,
       customerToUpdate: customer,
     });
@@ -144,7 +144,7 @@ export const ManageUser = () => {
 
     try {
       setLoadingUserId(customer.user_id);
-      const newStatus = customer.status === "Active" ? "Disabled" : "Active";
+      const newStatus = customer.status === "Active" ? "Blocked" : "Active";
       const response = await userService.updateUserStatus(
         customer.user_id,
         newStatus
@@ -181,6 +181,7 @@ export const ManageUser = () => {
     console.log(customer);
     setShowModal(true);
   };
+
   const closeModal = () => {
     setShowModal(false);
     setSelectedCustomer(null);

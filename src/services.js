@@ -266,6 +266,23 @@ const userService = {
     }
   },
 
+  updateRiderStatus: async (riderId, status) => {
+    try {
+      const response = await axios.put(
+        API_URL + "rider/" + riderId + "/status",
+        { status }
+      );
+      console.log(
+        `API response for updating user ${riderId} status:`,
+        response.data
+      );
+      return response.data;
+    } catch (error) {
+      console.error(`API error for updating user ${riderId} status:`, error);
+      throw error;
+    }
+  },
+
   updateUserStatus: async (userId, status) => {
     try {
       const response = await axios.put(

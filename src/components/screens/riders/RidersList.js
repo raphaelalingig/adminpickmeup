@@ -111,7 +111,7 @@ const RidersList = () => {
     try {
       const responses = await Promise.all(
         selectedRiders.map((riderId) =>
-          userService.updateUserStatus(riderId, "Active")
+          userService.updateRiderStatus(riderId, "Active")
         )
       );
 
@@ -150,7 +150,7 @@ const RidersList = () => {
     try {
       const responses = await Promise.all(
         selectedRiders.map((riderId) =>
-          userService.updateUserStatus(riderId, "Disabled")
+          userService.updateRiderStatus(riderId, "Disabled")
         )
       );
 

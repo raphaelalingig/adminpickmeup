@@ -1,5 +1,5 @@
 import axios from "axios";
-import { API_URL, img_url } from "./api_url";
+import { API_URL } from "./api_url";
 import swal from "sweetalert2";
 
 const userService = {
@@ -107,9 +107,34 @@ const userService = {
     return response.data;
   },
 
-  fare: async () => {
-    const response = await axios.get(API_URL + "view_fare")
-    return response.data;
+  // Fetch fare data
+  getFare : async () => {
+    try {
+      const response = await axios.get(API_URL + "view_fare");
+      console.log(response);
+      return response.data; // Assuming the API returns the fare data in the response body
+    } catch (error) {
+      console.error("Error fetching fare data:", error);
+      throw error; // Rethrow to handle it in the calling code
+    }
+  },
+
+  // Update fare data
+  updateFare : async (dataToSend) => {
+    try {
+      const token = localStorage.getItem("token"); // Or use your preferred method to retrieve tokens
+      console.log(token)
+      const response = await axios.put(API_URL + "update_fare", dataToSend, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      console.log(response.message)
+      return response.data; // Assuming success response contains some data
+    } catch (error) {
+      console.error("Error updating fare:", error);
+      throw error; // Rethrow to handle it in the calling code
+    }
   },
 
   fetchRiders: async () => {

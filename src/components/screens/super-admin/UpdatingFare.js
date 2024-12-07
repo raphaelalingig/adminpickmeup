@@ -1,34 +1,83 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Sidenav from "../../parts/Sidenav";
-import Header from "../../parts/Header";
+import userService from "../../../services";
+import swal from "sweetalert2";
 
 const UpdateFare = () => {
   const [formData, setFormData] = useState({
-    fairName: "",
-    location: "",
-    date: "", // Initialize with an empty string
-    description: "",
+    first2km: "", // Default 40
+    exceeding2km: "", // Default 12
+    password: "", // For superadmin authentication
   });
-
   const [isEditable, setIsEditable] = useState(false);
+
+  // Fetch fare data on mount
+  useEffect(() => {
+    const fetchFareData = async () => {
+      try {
+        const response = await userService.getFare(); // Adjust based on your service method
+        setFormData({
+          first2km: response.first_2km || "40",
+          exceeding2km: response.exceeding_2km || "12",
+          password: "", // Password starts empty
+        });
+      } catch (error) {
+        console.error("Error fetching fare data:", error);
+        alert("Failed to fetch fare data.");
+      }
+    };
+
+    fetchFareData();
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Updated Fair Data: ", formData);
-    // Add logic to send formData to the server.
-    setIsEditable(false); // Disable editing after submission
+    if (!formData.password) {
+      alert("Password is required for authentication.");
+      return;
+    }
+
+    try {
+      const dataToSend = {
+        first_2km: formData.first2km,
+        exceeding_2km: formData.exceeding2km,
+        password: formData.password,
+      };
+      await userService.updateFare(dataToSend);
+      swal.fire({
+        title: "Fare updated successfully!",
+        icon: "success",
+        toast: true,
+        timer: 4000,
+        position: "top-right",
+        timerProgressBar: true,
+        showConfirmButton: false,
+      });
+      setIsEditable(false);
+      setFormData({
+        password: "", 
+      });
+    } catch (error) {
+      console.error("Error updating fare:", error);
+      swal.fire({
+        title: "Incorrect Password! Please Try Again.",
+        icon: "error",
+        toast: true,
+        timer: 3000,
+        position: "top-right",
+        timerProgressBar: true,
+        showConfirmButton: false,
+      });
+    }
   };
 
   const handleEdit = () => {
     setIsEditable(true);
-    // Set the date field to the current date
-    const currentDate = new Date().toISOString().split("T")[0]; // Get the current date in YYYY-MM-DD format
-    setFormData({ ...formData, date: currentDate });
   };
 
   return (
@@ -38,26 +87,25 @@ const UpdateFare = () => {
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col bg-gray-100">
-        {/* Update Fair Form */}
         <main className="p-8">
-          <h1 className="text-2xl font-bold mb-6">Update Fair</h1>
+          <h1 className="text-2xl font-bold mb-6">Update Fare</h1>
           <form
             className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4"
             onSubmit={handleSubmit}
           >
-            {/* Fair Name */}
+            {/* First 2 kilometers */}
             <div className="mb-4">
               <label
-                htmlFor="fairName"
+                htmlFor="first2km"
                 className="block text-gray-700 text-sm font-bold mb-2"
               >
-                First 2 kilometers
+                First 2 kilometers Fare
               </label>
               <input
                 type="text"
-                id="fairName"
-                name="fairName"
-                value={formData.fairName}
+                id="first2km"
+                name="first2km"
+                value={formData.first2km}
                 onChange={handleChange}
                 disabled={!isEditable}
                 className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${
@@ -68,19 +116,19 @@ const UpdateFare = () => {
               />
             </div>
 
-            {/* Location */}
+            {/* Exceeding 2 kilometers */}
             <div className="mb-4">
               <label
-                htmlFor="location"
+                htmlFor="exceeding2km"
                 className="block text-gray-700 text-sm font-bold mb-2"
               >
-                Exceeding 2 kilometers
+                Exceeding 2 kilometers Fare
               </label>
               <input
                 type="text"
-                id="location"
-                name="location"
-                value={formData.location}
+                id="exceeding2km"
+                name="exceeding2km"
+                value={formData.exceeding2km}
                 onChange={handleChange}
                 disabled={!isEditable}
                 className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${
@@ -91,16 +139,26 @@ const UpdateFare = () => {
               />
             </div>
 
-            {/* Date */}
+            {/* Password */}
             <div className="mb-4">
-              <label className="block text-gray-700">Password:</label>
+              <label
+                htmlFor="password"
+                className="block text-gray-700 text-sm font-bold mb-2"
+              >
+                Password
+              </label>
               <input
                 type="password"
+                id="password"
                 name="password"
-                value={""}
-                className="border rounded w-full py-2 px-3 text-gray-700"
+                value={formData.password}
                 onChange={handleChange}
                 disabled={!isEditable}
+                className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${
+                  !isEditable ? "bg-gray-200 cursor-not-allowed" : ""
+                }`}
+                placeholder="Enter your password"
+                required
               />
             </div>
 

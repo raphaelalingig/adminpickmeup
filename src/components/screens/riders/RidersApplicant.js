@@ -111,11 +111,11 @@ const Modal = ({
   };
  
   const rejectionReasons = [
-    "Notorious",
-    "Criminal records",
-    "Have a bad reputation",
+    "Tampered documents records",
+    "With criminal records ",
+    "Character problem",
     "Not suitable",
-    "Others"
+    "Others",
   ];
   {/*modal for something went missing*/}
   const handleMissingReasonConfirm = (reason, otherReason) => {
@@ -280,7 +280,7 @@ const Modal = ({
             className="bg-yellow-400 text-white px-6 py-2 rounded hover:bg-yellow-600 transition-colors"
             onClick={() => setShowMissingModal(true)}
           >
-            Somethings missing
+            Unclear Docs
           </button>
           <button
             onClick={onClose}
@@ -294,7 +294,7 @@ const Modal = ({
       {showMissingModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
-            <h3 className="text-xl font-bold mb-4">Select Missing Reason</h3>
+            <h3 className="text-xl font-bold mb-4">Select Reason</h3>
             <div className="space-y-3">
               {["Wrong Papers", "Blurry Papers", "Others"].map((reason) => (
                 <label key={reason} className="flex items-center space-x-2">

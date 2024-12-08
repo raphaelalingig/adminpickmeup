@@ -5,6 +5,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import userService from "../../../services";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 const AddAdminForm = ({
   setShowForm,
@@ -19,6 +20,11 @@ const AddAdminForm = ({
     title: "",
     message: "",
   });
+
+
+
+  const [showPassword, setShowPassword] = useState(false);
+
 
 
   const calculatePasswordStrength = (password) => {
@@ -272,15 +278,29 @@ const AddAdminForm = ({
           </div>
           {!editingAdminId && (
             <>
+              {/* Password Field */}
               <div className="mb-4">
                 <label className="block text-gray-700">Password:</label>
-                <input
-                  type="password"
-                  name="password"
-                  value={userData.password}
-                  className="border rounded w-full py-2 px-3 text-gray-700"
-                  onChange={handleChange}
-                />
+                <div className="relative">
+                  <input
+                    type={showPassword ? "text" : "password"} // Toggle type based on state
+                    name="password"
+                    value={userData.password}
+                    className="border rounded w-full py-2 px-3 text-gray-700"
+                    onChange={handleChange}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword((prev) => !prev)} // Toggle state
+                    className="absolute right-3 top-2 text-gray-600 hover:text-gray-900"
+                  >
+                    {showPassword ? (
+                      <FaEyeSlash className="h-5 w-5" /> // Hide password icon
+                    ) : (
+                      <FaEye className="h-5 w-5" /> // Show password icon
+                    )}
+                  </button>
+                </div>
                 {userData.password && (
                   <div
                     className={`text-sm mt-1 ${getPasswordStrengthColor(
@@ -297,15 +317,30 @@ const AddAdminForm = ({
                   <div className="text-red-500">{errors.password}</div>
                 )}
               </div>
+
+              {/* Confirm Password Field */}
               <div className="mb-4">
                 <label className="block text-gray-700">Confirm Password:</label>
-                <input
-                  type="password"
-                  name="repassword"
-                  value={userData.repassword}
-                  className="border rounded w-full py-2 px-3 text-gray-700"
-                  onChange={handleChange}
-                />
+                <div className="relative">
+                  <input
+                    type={showPassword ? "text" : "password"} // Reuse show/hide logic
+                    name="repassword"
+                    value={userData.repassword}
+                    className="border rounded w-full py-2 px-3 text-gray-700"
+                    onChange={handleChange}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword((prev) => !prev)} // Toggle state
+                    className="absolute right-3 top-2 text-gray-600 hover:text-gray-900"
+                  >
+                    {showPassword ? (
+                      <FaEyeSlash className="h-5 w-5" /> // Hide password icon
+                    ) : (
+                      <FaEye className="h-5 w-5" /> // Show password icon
+                    )}
+                  </button>
+                </div>
                 {errors.repassword && (
                   <div className="text-red-500">{errors.repassword}</div>
                 )}

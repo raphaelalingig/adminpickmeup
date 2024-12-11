@@ -106,7 +106,7 @@ const Header = () => {
               </button>
 
               {isInfoVisible && (
-                <div className="absolute top-12 left-0 bg-white p-4 shadow-lg rounded border border-gray-300 w-64">
+                <div className="absolute top-12 left-1/2 transform -translate-x-1/2 bg-white p-4 shadow-lg rounded border border-gray-300 w-64">
                   <p className="text-gray-600">This is a sample info box.</p>
                 </div>
               )}
@@ -119,6 +119,7 @@ const Header = () => {
               </span>
             )}
           </div>
+
           <Menu>
             {({ open }) => (
               <>

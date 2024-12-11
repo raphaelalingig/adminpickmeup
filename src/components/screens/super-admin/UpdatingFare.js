@@ -102,13 +102,12 @@ const UpdateFare = () => {
   };
 
   return (
-    <div className="flex flex-col min-h-screen">
+   <div className="flex h-screen overflow-hidden">
       <div className="z-[9999]">
         <Sidenav />
-
-        {/* Main Content */}
-        <div className="flex-1 flex flex-col bg-gray-100">
-          <main className="p-8">
+      </div>
+      <div className="flex flex-col flex-1 min-w-0">
+        <main className="flex-1 p-3 bg-gray-100 overflow-auto">
             <h1 className="text-2xl font-bold mb-6">Update Fare</h1>
             <form
               className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4"
@@ -228,7 +227,7 @@ const UpdateFare = () => {
           </main>
         </div>
       </div>
-    </div>
+    
   );
 };
 

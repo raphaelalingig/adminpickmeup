@@ -8,6 +8,7 @@ import userService from "../../services";
 import { useAuth } from "../../hooks/useAuth";
 import { AuthContext } from "../../context/AuthContext";
 import { BellIcon } from "@heroicons/react/outline";
+import Pusher from "pusher-js";
 
 const Header = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -15,6 +16,34 @@ const Header = () => {
   const [unreadCount, setUnreadCount] = useState(0);
   const { logout } = useAuth();
   const { isSideBarMenuOpen, setIsSideBarMenuOpen } = useContext(AuthContext);
+  const [notications, setNotifications] = useState([]);
+
+  // // Pusher setup for booking updates
+  // useEffect(() => {
+  //   // Initial data fetch
+  //   fetchNotificationData();
+
+  //   // Pusher setup
+  //   const pusher = new Pusher("1b95c94058a5463b0b08", {
+  //     cluster: "ap1",
+  //     encrypted: true,
+  //   });
+
+  //   const channel = pusher.subscribe("dashboard");
+
+  //   // Listen for the DASHBOARD_UPDATE event and update state
+  //   channel.bind("DASHBOARD_NOTIF", (data) => {
+  //     console.log(data);
+  //     setNotifications(data.notications);
+  //   });
+
+  //   // Cleanup function
+  //   return () => {
+  //     channel.unbind_all();
+  //     channel.unsubscribe();
+  //     pusher.disconnect();
+  //   };
+  // }, [fetchNotificationData]);
 
   const handleLogout = async () => {
     try {
@@ -94,8 +123,9 @@ const Header = () => {
         </div>
 
         <div className="relative flex items-center space-x-6">
-          <div className="relative">
-            {/* Bell Icon */}
+{/* Bell Icon */}         
+          {/* <div className="relative">
+            
             <div className="relative">
               <button
                 type="button"
@@ -110,15 +140,15 @@ const Header = () => {
                   <p className="text-gray-600">This is a sample info box.</p>
                 </div>
               )}
-            </div>
+            </div> */}
 
             {/* Notification Badge */}
-            {unreadCount > 0 && (
+            {/* {unreadCount > 0 && (
               <span className="absolute top-0 right-0 block h-4 w-4 bg-red-500 text-white text-xs leading-none rounded-full ring-2 ring-white">
                 {unreadCount}
               </span>
             )}
-          </div>
+          </div> */}
           <Menu>
             {({ open }) => (
               <>

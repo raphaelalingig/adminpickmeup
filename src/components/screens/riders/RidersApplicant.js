@@ -29,7 +29,12 @@ const UserCard = ({ rider, onMoreInfo }) => {
   const statusColor = getStatusColor(verification_status);
 
   return (
-    <div className="border p-2 rounded-lg shadow-sm bg-white mb-4">
+    <div className="border p-2 rounded-lg shadow-sm bg-white mb-4 relative">
+      {verification_status === "Pending" && (
+        <div className="absolute top-2 right-2">
+          <span className="w-2 h-2 bg-red-500 rounded-full block"></span>
+        </div>
+      )}
       <div className="flex items-center">
         <img
           src={user.avatar || defaultProfileLogo}

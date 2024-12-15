@@ -83,6 +83,23 @@ const RidersList = () => {
     pageNumbers.push(i);
   }
 
+  const getExpirationStatus = (expirationDate) => {
+    if (!expirationDate) return 'none';
+    
+    const today = new Date();
+    const expDate = new Date(expirationDate);
+    const oneWeek = new Date();
+    oneWeek.setDate(today.getDate() + 7);
+    
+    if (expDate < today) {
+      return 'expired'; // red
+    } else if (expDate <= oneWeek) {
+      return 'warning'; // yellow
+    } else {
+      return 'valid'; // green
+    }
+  };
+
   const handleSelectRider = (riderId) => {
     setSelectedRiders((prevSelectedRiders) => {
       if (prevSelectedRiders.includes(riderId)) {
@@ -326,27 +343,59 @@ const RidersList = () => {
                               </span>
                             )}
                           </td>
-                          <td>
+                          <td className="px-4 py-2">
                             {rider.rider?.requirement_photos?.length > 0
                               ? rider.rider.requirement_photos
                                   .filter((photo) => photo.requirement_id === 6)
-                                  .map((photo, index) => (
-                                    <>
-                                      <span key={index}>{photo.photo_url}</span>
-                                    </>
-                                  ))
-                              : "No License Expiration Date"}
+                                  .map((photo, index) => {
+                                    const status = getExpirationStatus(photo.photo_url);
+                                    return (
+                                      <span key={index} className="inline-flex items-center">
+                                        <span 
+                                          className={`w-3 h-3 rounded-full mr-2 ${
+                                            status === 'expired' ? 'bg-red-500' :
+                                            status === 'warning' ? 'bg-yellow-500' :
+                                            status === 'valid' ? 'bg-green-500' :
+                                            'bg-gray-500'
+                                          }`}
+                                        ></span>
+                                        <span>{photo.photo_url}</span>
+                                      </span>
+                                    );
+                                  })
+                              : <span className="inline-flex items-center">
+                                  <span className="w-3 h-3 bg-gray-500 rounded-full mr-2"></span>
+                                  <span>No License Expiration Date</span>
+                                </span>
+                            }
                           </td>
-                          <td>
+                          <td className="px-4 py-2">
                             {rider.rider?.requirement_photos?.length > 0
                               ? rider.rider.requirement_photos
                                   .filter((photo) => photo.requirement_id === 3)
-                                  .map((photo, index) => (
-                                    <span key={index}>{photo.photo_url}</span>
-                                  ))
-                              : "No OR Expiration Date"}
+                                  .map((photo, index) => {
+                                    const status = getExpirationStatus(photo.photo_url);
+                                    return (
+                                      <span key={index} className="inline-flex items-center">
+                                        <span 
+                                          className={`w-3 h-3 rounded-full mr-2 ${
+                                            status === 'expired' ? 'bg-red-500' :
+                                            status === 'warning' ? 'bg-yellow-500' :
+                                            status === 'valid' ? 'bg-green-500' :
+                                            'bg-gray-500'
+                                          }`}
+                                        ></span>
+                                        <span>{photo.photo_url}</span>
+                                      </span>
+                                    );
+                                  })
+                              : <span className="inline-flex items-center">
+                                  <span className="w-3 h-3 bg-gray-500 rounded-full mr-2"></span>
+                                  <span>No OR Expiration Date</span>
+                                </span>
+                            }
                           </td>
-                          <td>
+                          <td className="px-4 py-2">
                             <span>{rider.rider.availability}</span>
                           </td>
                           <td className="px-4 py-2">
@@ -531,37 +580,45 @@ const RidersList = () => {
             </h2>
             {modalInfo && (
               <div className="space-y-2">
-                <p>
-                  <strong className="text-gray-700">Name:</strong>{" "}
-                  {modalInfo.first_name} {modalInfo.last_name}
-                </p>
-                <p>
-                  <strong className="text-gray-700">Phone Number:</strong>{" "}
-                  {modalInfo.mobile_number}
-                </p>
-                <p>
-                  <strong className="text-gray-700">Status:</strong>{" "}
-                  {modalInfo.status}
-                </p>
-                <p>
-                  <strong className="text-gray-700">License Expiration:</strong>{" "}
-                  {modalInfo.license_expiration}
-                </p>
-                <p>
-                  <strong className="text-gray-700">OR Expiration:</strong>{" "}
-                  {modalInfo.or_expiration}
-                </p>
-                <p>
-                  <strong className="text-gray-700">Email:</strong>{" "}
-                  {modalInfo.email}
-                </p>
-                <p>
-                  <strong className="text-gray-700">Date of Birth:</strong>{" "}
-                  {modalInfo.date_of_birth
-                    ? new Date(modalInfo.date_of_birth).toLocaleDateString()
-                    : "N/A"}
-                </p>
-              </div>
+              <p>
+                <strong className="text-gray-700">Name:</strong>{" "}
+                {modalInfo.first_name} {modalInfo.last_name}
+              </p>
+              <p>
+                <strong className="text-gray-700">Phone Number:</strong>{" "}
+                {modalInfo.mobile_number}
+              </p>
+              <p>
+                <strong className="text-gray-700">Status:</strong>{" "}
+                {modalInfo.status}
+              </p>
+              <p>
+                <strong className="text-gray-700">License Expiration:</strong>{" "}
+                {modalInfo.rider?.requirement_photos?.length > 0
+                  ? modalInfo.rider.requirement_photos
+                      .filter((photo) => photo.requirement_id === 6)
+                      .map((photo) => photo.photo_url)
+                  : "No License Expiration Date"}
+              </p>
+              <p>
+                <strong className="text-gray-700">OR Expiration:</strong>{" "}
+                {modalInfo.rider?.requirement_photos?.length > 0
+                  ? modalInfo.rider.requirement_photos
+                      .filter((photo) => photo.requirement_id === 3)
+                      .map((photo) => photo.photo_url)
+                  : "No OR Expiration Date"}
+              </p>
+              <p>
+                <strong className="text-gray-700">Email:</strong>{" "}
+                {modalInfo.email}
+              </p>
+              <p>
+                <strong className="text-gray-700">Date of Birth:</strong>{" "}
+                {modalInfo.date_of_birth
+                  ? new Date(modalInfo.date_of_birth).toLocaleDateString()
+                  : "N/A"}
+              </p>
+            </div>
             )}
             <div className="mt-6 flex justify-end">
               <button

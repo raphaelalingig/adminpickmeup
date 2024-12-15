@@ -63,7 +63,7 @@ const Sidenav = () => {
     { path: "/dashboard", label: "Dashboard" },
     { path: "/riderslist", label: "Manage Riders", parent: "Riders" },
     { path: "/riderspayment", label: "Rider Payment", parent: "Riders" },
-    { path: "/ridersapplicant", label: "Rider Applications", parent: "Riders", showBadge: true },
+    { path: "/ridersapplicant", label: "Rider Requirements", parent: "Riders", showBadge: true },
     { path: "/riderslocation", label: "Rider Location", parent: "Riders" },
     { path: "/manageuser", label: "Manage Users" },
     { path: "/manageadmin", label: "Manage Admin", role: 1 },

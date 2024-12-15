@@ -13,37 +13,65 @@ import Pusher from "pusher-js";
 const Header = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const navigate = useNavigate();
-  const [unreadCount, setUnreadCount] = useState(0);
+  const [pendingCount, setPendingCount] = useState(0); // State for pending verifications
   const { logout } = useAuth();
   const { isSideBarMenuOpen, setIsSideBarMenuOpen } = useContext(AuthContext);
-  const [notications, setNotifications] = useState([]);
 
-  // // Pusher setup for booking updates
+  // Fetch pending applications
+  const fetchPendingApplications = async () => {
+    try {
+      const data = await userService.fetchRequirements();
+      const pendingApps = data.filter(
+        (rider) => rider.verification_status === "Pending"
+      ).length;
+      setPendingCount(pendingApps);
+    } catch (error) {
+      console.error("Error fetching pending applications:", error);
+    }
+  };
+  
   // useEffect(() => {
-  //   // Initial data fetch
-  //   fetchNotificationData();
-
-  //   // Pusher setup
-  //   const pusher = new Pusher("1b95c94058a5463b0b08", {
-  //     cluster: "ap1",
-  //     encrypted: true,
-  //   });
-
-  //   const channel = pusher.subscribe("dashboard");
-
-  //   // Listen for the DASHBOARD_UPDATE event and update state
-  //   channel.bind("DASHBOARD_NOTIF", (data) => {
-  //     console.log(data);
-  //     setNotifications(data.notications);
-  //   });
-
-  //   // Cleanup function
-  //   return () => {
-  //     channel.unbind_all();
-  //     channel.unsubscribe();
-  //     pusher.disconnect();
+  //   const fetchPendingApplications = async () => {
+  //     try {
+  //       const data = await userService.fetchRequirements();
+  //       const pendingApps = data.filter(
+  //         (rider) => rider.verification_status === "Pending"
+  //       ).length;
+  //       setPendingCount(pendingApps);
+  //     } catch (error) {
+  //       console.error("Error fetching pending applications:", error);
+  //     }
   //   };
-  // }, [fetchNotificationData]);
+
+  //   fetchPendingApplications();
+  // }, []);
+
+  // Pusher setup for booking updates
+  useEffect(() => {
+    // Initial data fetch
+    fetchPendingApplications();
+
+    // Pusher setup
+    const pusher = new Pusher("1b95c94058a5463b0b08", {
+      cluster: "ap1",
+      encrypted: true,
+    });
+
+    const channel = pusher.subscribe("requirements");
+
+    // Listen for the DASHBOARD_UPDATE event and update state
+    channel.bind("REQUIREMENTS", (data) => {
+      console.log("header data", data);
+      fetchPendingApplications();
+    });
+
+    // Cleanup function
+    return () => {
+      channel.unbind_all();
+      channel.unsubscribe();
+      pusher.disconnect();
+    };
+  }, [fetchPendingApplications]);
 
   const handleLogout = async () => {
     try {
@@ -96,14 +124,14 @@ const Header = () => {
 
   return (
     <>
-      {/* Header Component */}
       <header className="bg-black text-white flex items-center justify-between p-4 relative z-50">
-        <div className="flex items-center space-x-2 ">
+        <div className="flex items-center space-x-2 relative">
+          {/* Hamburger Icon */}
           <div
-            onClick={() => setIsSideBarMenuOpen(!isSideBarMenuOpen)}
+            onClick={handleMenuSideBar}
             className={`p-2 ${
               isSideBarMenuOpen ? "ml-60" : "justify-start"
-            } hover:bg-[#C8A400] rounded-full cursor-pointer`}
+            } hover:bg-[#C8A400] rounded-full cursor-pointer relative`}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -119,36 +147,14 @@ const Header = () => {
                 d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
               />
             </svg>
+            {/* Red Dot */}
+            {pendingCount > 0 && (
+              <span className="absolute top-0 right-0 w-3 h-3 bg-red-500 rounded-full"></span>
+            )}
           </div>
         </div>
 
         <div className="relative flex items-center space-x-6">
-{/* Bell Icon */}         
-          {/* <div className="relative">
-            
-            <div className="relative">
-              <button
-                type="button"
-                className="p-2 bg-gray-100 rounded-full hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-400"
-                onClick={toggleInfo}
-              >
-                <BellIcon className="w-6 h-6 text-gray-800" />
-              </button>
-
-              {isInfoVisible && (
-                <div className="absolute top-12 left-1/2 transform -translate-x-1/2 bg-white p-4 shadow-lg rounded border border-gray-300 w-64">
-                  <p className="text-gray-600">This is a sample info box.</p>
-                </div>
-              )}
-            </div> */}
-
-            {/* Notification Badge */}
-            {/* {unreadCount > 0 && (
-              <span className="absolute top-0 right-0 block h-4 w-4 bg-red-500 text-white text-xs leading-none rounded-full ring-2 ring-white">
-                {unreadCount}
-              </span>
-            )}
-          </div> */}
           <Menu>
             {({ open }) => (
               <>
@@ -180,7 +186,7 @@ const Header = () => {
                     {({ active }) => (
                       <a
                         href="#"
-                        onClick={openModal}
+                        onClick={handleLogout}
                         className={`block px-4 py-2 text-white cursor-pointer ${
                           active ? "bg-gray-600" : ""
                         }`}

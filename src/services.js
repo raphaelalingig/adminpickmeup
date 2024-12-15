@@ -359,6 +359,18 @@ const userService = {
     }
   },
 
+  rejectRider: async (userId, status, reason) => {
+    try {
+      const response = await axios.put(`${API_URL}reject_rider/${userId}`, {
+        status: status,
+        reason: reason
+      });
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  },
+
   fetchLoc: async () => {
     try {
       const response = await axios.get(API_URL + "riders/locations");

@@ -71,6 +71,7 @@ const Modal = ({
   requirementphotos,
   onClose,
   onVerifyClick,
+  onStatusChange 
 }) => {
   const [selectedImage, setSelectedImage] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -123,15 +124,61 @@ const Modal = ({
     "Others",
   ];
   {/*modal for something went missing*/}
-  const handleMissingReasonConfirm = (reason, otherReason) => {
-    if (reason === "Others") {
-      console.log("Selected Reason: Others, Details:", otherReason);
-    } else {
-      console.log("Selected Reason:", reason);
+  const handleMissing = () => {
+    setShowMissingModal(true);
+  };
+  
+  const handleMissingReasonConfirm = async () => {
+    if (!missingReason) return;
+
+    setIsLoading(true);
+    try {
+      const finalReason = missingReason === "Others" ? otherMissingReason : missingReason;
+      
+      // Make API call to update status
+      const response = await userService.rejectRider(
+        user.user_id,
+        "Pending",
+        finalReason
+      );
+
+      if (response) {
+        // Update local state
+        await onStatusChange(user.user_id, "Pending");
+        
+        // Show success message
+        swal.fire({
+          title: "Documentation Request Sent",
+          text: "Rider has been notified about unclear documentation",
+          icon: "success",
+          toast: true,
+          timer: 3000,
+          position: "top-right",
+          timerProgressBar: true,
+          showConfirmButton: false,
+        });
+
+        onClose();
+      }
+    } catch (error) {
+      console.error("Error processing unclear documentation:", error);
+      
+      swal.fire({
+        title: "Error processing request",
+        text: error.response?.data?.message || "An error occurred",
+        icon: "error",
+        toast: true,
+        timer: 3000,
+        position: "top-right",
+        timerProgressBar: true,
+        showConfirmButton: false,
+      });
+    } finally {
+      setIsLoading(false);
+      setShowMissingModal(false);
+      setMissingReason("");
+      setOtherMissingReason("");
     }
-    setShowMissingModal(false);
-    setMissingReason("");
-    setOtherMissingReason("");
   };
 
 
@@ -140,13 +187,52 @@ const Modal = ({
     setShowRejectionModal(true);
   };
 
-  const handleConfirmRejection = () => {
-    if (selectedReason) {
-      // Handle the rejection with the selected reason
-      console.log("Rejected with reason:", selectedReason);
+  const handleConfirmRejection = async () => {
+    if (!selectedReason) return;
+
+    setIsLoading(true);
+    try {
+      const finalReason = selectedReason === "Others" ? otherReason : selectedReason;
+      
+      const response = await userService.rejectRider(
+        user.user_id,
+        "Unverified",
+        finalReason
+      );
+
+      if (response) {
+        await onStatusChange(user.user_id, "Unverified");
+        
+        swal.fire({
+          title: "Rider Successfully Rejected",
+          icon: "success",
+          toast: true,
+          timer: 3000,
+          position: "top-right",
+          timerProgressBar: true,
+          showConfirmButton: false,
+        });
+
+        onClose();
+      }
+    } catch (error) {
+      console.error("Error rejecting rider:", error);
+      
+      swal.fire({
+        title: "Error rejecting rider",
+        text: error.response?.data?.message || "An error occurred",
+        icon: "error",
+        toast: true,
+        timer: 3000,
+        position: "top-right",
+        timerProgressBar: true,
+        showConfirmButton: false,
+      });
+    } finally {
+      setIsLoading(false);
       setShowRejectionModal(false);
       setSelectedReason("");
-      // Add your rejection API call here
+      setOtherReason("");
     }
   };
 
@@ -231,8 +317,13 @@ const Modal = ({
                 {/* Reject button */}
                 <button
                   type="button"
-                  className="bg-red-600 text-white px-6 py-2 rounded hover:bg-red-700 transition-colors"
+                  className={`px-6 py-2 rounded transition-colors ${
+                    verification_status === "Verified"
+                      ? "bg-gray-300 cursor-not-allowed"
+                      : "bg-red-600 hover:bg-red-700 text-white"
+                  }`}
                   onClick={handleReject}
+                  disabled={verification_status === "Verified"}
                 >
                   Reject
                 </button>
@@ -282,10 +373,15 @@ const Modal = ({
           {/* Somethings missing button */}
           <button
             type="button"
-            className="bg-yellow-400 text-white px-6 py-2 rounded hover:bg-yellow-600 transition-colors"
-            onClick={() => setShowMissingModal(true)}
+            className={`px-6 py-2 rounded transition-colors ${
+              verification_status === "Verified"
+                ? "bg-gray-300 cursor-not-allowed"
+                : "bg-yellow-400 hover:bg-yellow-600 text-white"
+            }`}
+            onClick={handleMissing}
+            disabled={verification_status === "Verified"}
           >
-            Unclear Docs
+            Documentation Issue
           </button>
           <button
             onClick={onClose}
@@ -299,9 +395,9 @@ const Modal = ({
       {showMissingModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
-            <h3 className="text-xl font-bold mb-4">Select Reason</h3>
+            <h3 className="text-xl font-bold mb-4">Select Documentation Issue</h3>
             <div className="space-y-3">
-              {["Wrong Papers", "Blurry Papers", "Others"].map((reason) => (
+              {["Incorrect Documents", "Blurry Documents", "Missing Information", "Others"].map((reason) => (
                 <label key={reason} className="flex items-center space-x-2">
                   <input
                     type="radio"
@@ -316,7 +412,6 @@ const Modal = ({
               ))}
             </div>
 
-            {/* Conditional input field for "Others" */}
             {missingReason === "Others" && (
               <div className="mt-4">
                 <label className="block text-gray-700 mb-2">
@@ -344,20 +439,21 @@ const Modal = ({
                 Cancel
               </button>
               <button
-                onClick={() =>
-                  handleMissingReasonConfirm(missingReason, otherMissingReason)
-                }
+                onClick={handleMissingReasonConfirm}
                 disabled={
                   !missingReason ||
-                  (missingReason === "Others" && !otherMissingReason)
+                  (missingReason === "Others" && !otherMissingReason) ||
+                  isLoading
                 }
-                className={`px-4 py-2 rounded ${
+                className={`px-4 py-2 rounded flex items-center ${
                   missingReason &&
-                  (missingReason !== "Others" || otherMissingReason)
+                  (missingReason !== "Others" || otherMissingReason) &&
+                  !isLoading
                     ? "bg-yellow-400 hover:bg-yellow-500 text-white"
                     : "bg-gray-300 text-gray-500 cursor-not-allowed"
                 } transition-colors`}
               >
+                {isLoading && <Loader className="animate-spin mr-2" size={16} />}
                 Confirm
               </button>
             </div>
@@ -366,68 +462,63 @@ const Modal = ({
       )}
       {/* Rejection Modal */}
       {showRejectionModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
-            <h3 className="text-xl font-bold mb-4">Select Rejection Reason</h3>
-            <div className="space-y-3">
-              {rejectionReasons.map((reason) => (
-                <label key={reason} className="flex items-center space-x-2">
-                  <input
-                    type="radio"
-                    name="rejectionReason"
-                    value={reason}
-                    checked={selectedReason === reason}
-                    onChange={(e) => setSelectedReason(e.target.value)}
-                    className="form-radio text-red-600"
-                  />
-                  <span className="text-gray-700">{reason}</span>
-                </label>
-              ))}
-            </div>
-            {/* Conditional input field for "Others" */}
-            {selectedReason === "Others" && (
-              <div className="mt-4">
-                <label className="block text-gray-700 mb-2">
-                  Please specify:
-                </label>
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
+          <h3 className="text-xl font-bold mb-4">Select Rejection Reason</h3>
+          <div className="space-y-3">
+            {rejectionReasons.map((reason) => (
+              <label key={reason} className="flex items-center space-x-2">
                 <input
-                  type="text"
-                  value={otherReason}
-                  onChange={(e) => setOtherReason(e.target.value)}
-                  className="w-full border-gray-300 rounded px-3 py-2 focus:ring focus:ring-red-500 focus:border-red-500"
-                  placeholder="Enter your reason"
+                  type="radio"
+                  name="rejectionReason"
+                  value={reason}
+                  checked={selectedReason === reason}
+                  onChange={(e) => setSelectedReason(e.target.value)}
+                  className="form-radio text-red-600"
                 />
-              </div>
-            )}
-            <div className="mt-6 flex justify-end space-x-3">
-              <button
-                onClick={() => {
-                  setShowRejectionModal(false);
-                  setSelectedReason("");
-                  setOtherReason("");
-                }}
-                className="px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleConfirmRejection}
-                disabled={
-                  !selectedReason ||
-                  (selectedReason === "Others" && !otherReason)
-                }
-                className={`px-4 py-2 rounded ${
-                  selectedReason && (selectedReason !== "Others" || otherReason)
-                    ? "bg-red-600 hover:bg-red-700 text-white"
-                    : "bg-gray-300 text-gray-500 cursor-not-allowed"
-                } transition-colors`}
-              >
-                Confirm Rejection
-              </button>
+                <span className="text-gray-700">{reason}</span>
+              </label>
+            ))}
+          </div>
+          {selectedReason === "Others" && (
+            <div className="mt-4">
+              <label className="block text-gray-700 mb-2">Please specify:</label>
+              <input
+                type="text"
+                value={otherReason}
+                onChange={(e) => setOtherReason(e.target.value)}
+                className="w-full border border-gray-300 rounded px-3 py-2 focus:ring focus:ring-red-500 focus:border-red-500"
+                placeholder="Enter your reason"
+              />
             </div>
+          )}
+          <div className="mt-6 flex justify-end space-x-3">
+            <button
+              onClick={() => {
+                setShowRejectionModal(false);
+                setSelectedReason("");
+                setOtherReason("");
+              }}
+              className="px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={handleConfirmRejection}
+              disabled={!selectedReason || (selectedReason === "Others" && !otherReason) || isLoading}
+              className={`px-4 py-2 rounded flex items-center ${
+                selectedReason && (selectedReason !== "Others" || otherReason) && !isLoading
+                  ? "bg-red-600 hover:bg-red-700 text-white"
+                  : "bg-gray-300 text-gray-500 cursor-not-allowed"
+              } transition-colors`}
+            >
+              {isLoading && <Loader className="animate-spin mr-2" size={16} />}
+              Confirm Rejection
+            </button>
           </div>
         </div>
-      )}
+      </div>
+    )}
 
       {selectedImage && (
         <div className="fixed inset-0 bg-gray-600 bg-opacity-75 flex justify-center items-center z-50">

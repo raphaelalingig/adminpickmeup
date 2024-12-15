@@ -106,6 +106,7 @@ export const ManageUser = () => {
         const data = await userService.fetchCustomers();
         setCustomers(data);
         setFilteredCustomers(data);
+        console.log(data)
       } catch (error) {
         console.error("There was an error fetching the Customers!", error);
       } finally {
@@ -406,6 +407,12 @@ export const ManageUser = () => {
             </p>
             <p>
               <strong>Mobile Number:</strong> {selectedCustomer.mobile_number}
+            </p>
+            <p>
+              <strong>Username:</strong> {selectedCustomer.user_name}
+            </p>
+            <p>
+              <strong>Email:</strong> {selectedCustomer.email}
             </p>
             <button
               className="bg-gray-700 text-white font-bold py-1 px-3 rounded mt-4"

@@ -1,70 +1,125 @@
-# Getting Started with Create React App
+# PickMeUp - Admin Web Application (React.js)
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This repository contains the React.js admin web application for managing the PickMeUp platform.
 
-## Available Scripts
+## Prerequisites
 
-In the project directory, you can run:
+Before you begin, ensure you have the following installed:
+- Node.js (v14 or higher)
+- npm or yarn
+- Git
 
-### `npm start`
+## Installation
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+1. Clone the repository:
+```bash
+git clone https://github.com/Jundy25/adminpickmeup.git
+cd adminpickmeup
+```
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+2. Install dependencies:
+```bash
+npm install
+# or
+yarn install
+```
 
-### `npm test`
+3. Create a `.env` file in the root directory with the following contents:
+```
+REACT_APP_API_URL=http://localhost:8000/api
+REACT_APP_GOOGLE_MAPS_API_KEY=your_google_maps_api_key
+```
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+4. Start the development server:
+```bash
+npm start
+# or
+yarn start
+```
 
-### `npm run build`
+The admin panel will be accessible at `http://localhost:3000`.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## Building for Production
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+To create a production build:
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+```bash
+npm run build
+# or
+yarn build
+```
 
-### `npm run eject`
+The build files will be stored in the `build` directory. You can deploy these files to any static hosting service.
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+## Admin Credentials
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+### Default Superadmin User
+- Email: `superadmin@gmail.com`
+- Password: `!superadmin_123!`
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+### Default Admin User
+- Email: `admin@gmail.com`
+- Password: `!admin_123!`
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+## Environment Variables
 
-## Learn More
+The following environment variables can be configured in your `.env` file:
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+```
+REACT_APP_API_URL=http://localhost:8000/api
+REACT_APP_GOOGLE_MAPS_API_KEY=your_google_maps_api_key
+REACT_APP_SOCKET_URL=http://localhost:8000
+REACT_APP_VERSION=$npm_package_version
+```
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+## Features
 
-### Code Splitting
+The admin panel includes the following features:
+- User management
+- Driver management
+- Ride tracking and monitoring
+- Analytics and reporting
+- System configuration
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+## Authentication
 
-### Analyzing the Bundle Size
+The admin panel uses JWT authentication. The token is stored in local storage and automatically included in API requests.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+## Google Maps Integration
 
-### Making a Progressive Web App
+This application uses Google Maps for location tracking and visualization. To set up Google Maps:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+1. Obtain a Google Maps API key from the [Google Cloud Console](https://console.cloud.google.com/)
+2. Enable the necessary APIs in your Google Cloud project
+3. Add your API key to the `.env` file as shown above
 
-### Advanced Configuration
+## Customization
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+### Theme Configuration
 
-### Deployment
+The theme settings can be modified in `src/theme/index.js`.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+### Logo and Branding
 
-### `npm run build` fails to minify
+To update the logo and branding:
+1. Replace the logo files in the `public` directory
+2. Update the branding colors in the theme configuration
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+## Troubleshooting
+
+- If you encounter CORS issues, ensure your backend API has the correct CORS headers enabled.
+- For authentication issues, check that your API URL is correct and the backend server is running.
+- If components fail to load, check the browser console for errors and ensure all dependencies are installed.
+
+## Browser Support
+
+The admin panel is optimized for the following browsers:
+- Chrome (latest)
+- Firefox (latest)
+- Safari (latest)
+- Edge (latest)
+
+## Additional Resources
+
+- [React Documentation](https://reactjs.org/docs/getting-started.html)
+- [Material-UI Documentation](https://mui.com/getting-started/installation/)
